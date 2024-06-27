@@ -12,6 +12,14 @@ const char* vertexShaderSource = "#version 330 core\n"
 "gl_Position = vec4(aPos.x,aPos.y,aPos.z,1.0);\n"
 "}\0";
 
+//now we declare our fragment shader.
+const char* fragmentShaderSource = "#version 330 core\n"
+"out vec4 FragColor;\n"
+"void main()\n"
+"{\n"
+"FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"}\0";
+
 int main() {
 	glfwInit();
 	//THE VERSION WE WANT TO USE OF OPENGL WE INITIALIZE THAT IS 3.3
@@ -67,7 +75,7 @@ int main() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	//we have GL_STREAM_DRAW, GL_STATIC_DRAM, GL_DYNAMIC_DRAW
 
-	//now we store the vertex shadaer as an unsigned int and create the shader with glCreateShader and specify the type of shader we want 
+	//now we store the vertex shader as an unsigned int and create the shader with glCreateShader and specify the type of shader we want 
 	unsigned int vertexShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
@@ -75,19 +83,25 @@ int main() {
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
 	//the glShadersource function, first arg takes the shader object to compile, sec arg no. of string we're passing as souce code, third the actual source code of the vertex,fourth we keep it null
-	
+
+	//The process for compiling a fragment shader is similar to the vertex shader, we just use the GL_FRAGMENT_SHADER constant as the shader type.
+	unsigned int fragmentShader;
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+
 	//checking if the shader is was compiled
-	int success;
+	/*int success;
 	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
 
 	if (!success) {
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHHADER::VERTEX::COMPILATION FAILED\n" << infoLog << std::endl;
+		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION FAILED\n" << infoLog << std::endl;
 	}
 	else {
-		std::cout << "SHADER::VERTEX::COMPILATION SUCCESS"<<std::endl;
-	}
+		std::cout << "SHADER::FRAGMENT::COMPILATION SUCCESS"<<std::endl;
+	}*/
 
 	//so now don't wasnt the application to draw a single image and then  immediately quit and close the window, so we now call the render loop
 	while (!glfwWindowShouldClose(window)) {
