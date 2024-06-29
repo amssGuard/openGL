@@ -103,11 +103,52 @@ int main() {
 		std::cout << "SHADER::FRAGMENT::COMPILATION SUCCESS"<<std::endl;
 	}*/
 
+	//linking shaders
+	unsigned int shaderProgram;
+	shaderProgram = glCreateProgram();
+
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+
+	glUseProgram(shaderProgram);
+
+	//delete the vertex and fragent shader
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
+	//linking vertex Attributes
+	//glVertexAttribPointer agruments, first - position, second - size of the vertex attribute, third - data type, fourth - if we want it normalizedd or not, irrelevant as of now, fifth - stride, sixth - offset of where the position data begins in the buffer.   
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//VAO used for when configuring vertex attribute pointers 
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+
+	//bind vertex array object
+	glBindVertexArray(VAO);
+
+	//copy our vertices array in a buffer for openGL to use
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	//then set the vertex attributes pointers
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	
+	//now draw the object
+
 	//so now don't wasnt the application to draw a single image and then  immediately quit and close the window, so we now call the render loop
 	while (!glfwWindowShouldClose(window)) {
 		glfwSwapBuffers(window);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		glUseProgram(shaderProgram);
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glfwPollEvents();
 	}
 
