@@ -54,10 +54,29 @@ int main() {
 
 	//we now specify three vertices, each vertex having a 3D position
 	float vertices[] = {
-		-0.5f, -0.5f, 0.0f,
+		 0.5f, 0.5f, 0.0f,
 		 0.5f, -0.5f, 0.0f,
-		 0.5f,  0.5f, 0.0f
+		-0.5f, -0.5f, 0.0f,
+		-0.5f,  0.5f, 0.0f
 	};
+
+	unsigned int indices[] = {
+		0, 1, 3,
+		1, 2, 3
+	};
+
+	//ebo
+	unsigned int EBO;
+	glGenBuffers(1, &EBO);
+
+	
+
+	//VAO used for when configuring vertex attribute pointers 
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+
+	//bind vertex array object
+	glBindVertexArray(VAO);
 
 	//This is the first occurrence of an OpenGL object, this buffer has a uniqueID that corresponds with the buffer,so we can generate one with a bufferID  using the glGenBuffers fnt
 	unsigned int VBO;
@@ -74,6 +93,10 @@ int main() {
 	//the first argument is the type of the buffer, second argument is the size of the data in bytes, third arrgument is the data and fourth is how we want the gpu to manage the data
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	//we have GL_STREAM_DRAW, GL_STATIC_DRAM, GL_DYNAMIC_DRAW
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
 
 	//now we store the vertex shader as an unsigned int and create the shader with glCreateShader and specify the type of shader we want 
 	unsigned int vertexShader;
@@ -122,12 +145,7 @@ int main() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	//VAO used for when configuring vertex attribute pointers 
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
-
-	//bind vertex array object
-	glBindVertexArray(VAO);
+	
 
 	//copy our vertices array in a buffer for openGL to use
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -142,13 +160,14 @@ int main() {
 
 	//so now don't wasnt the application to draw a single image and then  immediately quit and close the window, so we now call the render loop
 	while (!glfwWindowShouldClose(window)) {
-		glfwSwapBuffers(window);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
